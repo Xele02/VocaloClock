@@ -15,8 +15,8 @@ import android.widget.EditText;
  */
 public class ClockWidgetConfigureActivity extends Activity {
 
-    int mAppWidgetId = AppWidgetManager.INVALID_APPWIDGET_ID;
-    EditText mAppWidgetText;
+    private int mAppWidgetId = AppWidgetManager.INVALID_APPWIDGET_ID;
+    private EditText mAppWidgetText;
     private static final String PREFS_NAME = "org.xele.vocaloclock.vocaloclock.ClockWidget";
     private static final String PREF_PREFIX_KEY = "appwidget_";
 
@@ -53,7 +53,8 @@ public class ClockWidgetConfigureActivity extends Activity {
         mAppWidgetText.setText(loadTitlePref(ClockWidgetConfigureActivity.this, mAppWidgetId));
     }
 
-    View.OnClickListener mOnClickListener = new View.OnClickListener() {
+    @SuppressWarnings("CanBeFinal")
+    private View.OnClickListener mOnClickListener = new View.OnClickListener() {
         public void onClick(View v) {
             final Context context = ClockWidgetConfigureActivity.this;
 
@@ -74,7 +75,7 @@ public class ClockWidgetConfigureActivity extends Activity {
     };
 
     // Write the prefix to the SharedPreferences object for this widget
-    static void saveTitlePref(Context context, int appWidgetId, String text) {
+    private static void saveTitlePref(Context context, int appWidgetId, String text) {
         SharedPreferences.Editor prefs = context.getSharedPreferences(PREFS_NAME, 0).edit();
         prefs.putString(PREF_PREFIX_KEY + appWidgetId, text);
         prefs.commit();

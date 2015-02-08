@@ -60,9 +60,9 @@ public final class ClockUpdateService extends Service
     void update()
     {
         Date now = new Date();
-        String hour = new SimpleDateFormat("H:m").format(now);
+        String hour = new SimpleDateFormat("HH:mm").format(now);
         String date = new SimpleDateFormat("EEEE").format(now);
-        String date2 = new SimpleDateFormat("d MMMM").format(now);
+        String date2 = new SimpleDateFormat("dd MMMM").format(now);
 
         AppWidgetManager appWidgetManager = AppWidgetManager.getInstance(this
                 .getApplicationContext());

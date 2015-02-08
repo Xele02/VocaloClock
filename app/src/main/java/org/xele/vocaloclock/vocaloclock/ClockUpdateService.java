@@ -33,7 +33,7 @@ public final class ClockUpdateService extends Service
         m_BroadcastReceiver = new BroadcastReceiver() {
             @Override
             public void onReceive(Context context, Intent intent) {
-                update();
+                update(context);
             }
         };
 
@@ -42,7 +42,7 @@ public final class ClockUpdateService extends Service
 
     @Override
     public int onStartCommand(Intent intent, int flags, int startId) {
-        update();
+        update(this.getApplicationContext());
         return super.onStartCommand(intent, flags, startId);
     }
 
@@ -57,31 +57,39 @@ public final class ClockUpdateService extends Service
         return null;
     }
 
-    void update()
+    public void update(Context context)
     {
+        AppWidgetManager appWidgetManager = AppWidgetManager.getInstance(context
+                .getApplicationContext());
+        ComponentName thisWidget = new ComponentName(context.getApplicationContext(),
+                ClockWidget.class);
+        int[] allWidgetIds = appWidgetManager.getAppWidgetIds(thisWidget);
+
+        for (int widgetId : allWidgetIds) {
+            RemoteViews remoteViews = updateWidget(context, widgetId);
+            appWidgetManager.updateAppWidget(widgetId, remoteViews);
+        }
+    }
+
+    public static RemoteViews updateWidget(Context context, int widgetId)
+    {
+        AppWidgetManager appWidgetManager = AppWidgetManager.getInstance(context
+                .getApplicationContext());
+
         Date now = new Date();
         String hour = new SimpleDateFormat("HH:mm").format(now);
         String date = new SimpleDateFormat("EEEE").format(now);
         String date2 = new SimpleDateFormat("dd MMMM").format(now);
 
-        AppWidgetManager appWidgetManager = AppWidgetManager.getInstance(this
-                .getApplicationContext());
-        ComponentName thisWidget = new ComponentName(getApplicationContext(),
-                ClockWidget.class);
-        int[] allWidgetIds = appWidgetManager.getAppWidgetIds(thisWidget);
-
-        for (int widgetId : allWidgetIds) {
-            RemoteViews remoteViews = new RemoteViews(this
+        RemoteViews remoteViews = new RemoteViews(context
                     .getApplicationContext().getPackageName(),
                     R.layout.clock_widget);
-            remoteViews.setTextViewText(R.id.hour, hour);
-            remoteViews.setTextViewText(R.id.date, date);
-            remoteViews.setTextViewText(R.id.date2, date2);
-            remoteViews.setImageViewResource(R.id.icon, R.drawable.a01+(int)(1000.0 * Math.random() % 15.0));
+        remoteViews.setTextViewText(R.id.hour, hour);
+        remoteViews.setTextViewText(R.id.date, date);
+        remoteViews.setTextViewText(R.id.date2, date2);
+        remoteViews.setImageViewResource(R.id.icon, R.drawable.a01+(int)(1000.0 * Math.random() % 15.0));
 
-            appWidgetManager.updateAppWidget(new ComponentName(this
-                    .getApplicationContext(), (Class) ClockWidget.class), remoteViews);
-        }
+        return remoteViews;
     }
 
 }
